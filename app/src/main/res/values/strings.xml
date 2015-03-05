@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">РФИ Демо</string>
+    <string name="action_settings">Settings</string>
+    <string name="label_cost">Сумма платежа:</string>
+    <string name="label_name">Назначение платежа:</string>
+    <string name="default_name">Тестирование сервиса</string>
+    <string name="default_cost">15</string>
+    <string name="label_phone">Номер телефона:</string>
+    <string name="pay_button">Оплатить</string>
+    <string name="label_status">Статус: </string>
+    <string name="default_status">ожидание начала оплаты</string>
+
+    <string name="status_start">ожидание начала оплаты</string>
+    <string name="status_created">создана транзакция (%d)</string>
+    <string name="status_waiting">ожидание оплаты транзакции (%d)</string>
+    <string name="status_cant_pay">не удалось оплатить транзакцию (%d)</string>
+    <string name="status_paid">транзакция (%d) оплачена</string>
+    <string name="status_cant_init">Не удалось инициировать транзакцию</string>
+
+    <string name="alba_key">МЕСТО ДЛЯ КЛЮЧА</string>
+    <string name="alba_payment_type">mc</string>
+</resources>
