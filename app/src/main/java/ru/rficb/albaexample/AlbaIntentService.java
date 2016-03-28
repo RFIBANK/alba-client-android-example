@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import ru.rficb.alba.AlbaClient;
+import java.math.BigDecimal;
+
+import ru.rficb.alba.AlbaService;
 import ru.rficb.alba.AlbaFatalError;
 import ru.rficb.alba.AlbaTemporaryError;
-import ru.rficb.alba.InitPaymentAnswer;
+import ru.rficb.alba.InitPaymentRequest;
+import ru.rficb.alba.InitPaymentResponse;
+import ru.rficb.alba.InitTestType;
 import ru.rficb.alba.TransactionDetails;
 
 
@@ -36,7 +40,7 @@ public class AlbaIntentService extends IntentService {
     private static final String EXTRA_PHONE = "ru.rficb.albaexample.extra.phone";
     private static final String EXTRA_SESSION_KEY = "ru.rficb.albaexample.extra.session_Key";
 
-    private AlbaClient alba = null;
+    private AlbaService alba = null;
 
     public static void startPayment(Context context, AlbaResultReceiver resultReceiver , String name, String amount, String phone) {
         Intent intent = new Intent(context, AlbaIntentService.class);
@@ -72,14 +76,14 @@ public class AlbaIntentService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (alba == null) {
-                alba = new AlbaClient(getResources().getString(R.string.alba_key));
+                alba = new AlbaService(getResources().getString(R.string.alba_key));
             }
 
             if (ACTION_START.equals(action)) {
                 final String name = intent.getStringExtra(EXTRA_NAME);
                 final String amount = intent.getStringExtra(EXTRA_AMOUNT);
                 final String phone = intent.getStringExtra(EXTRA_PHONE);
-                handleStartPayment(name, Float.parseFloat(amount), phone);
+                handleStartPayment(name, new BigDecimal(amount), phone);
             } else if (ACTION_CHECK.equals(action)) {
                 final int transactionId = intent.getIntExtra(EXTRA_TRANSACTION_ID, 0);
                 final String sessionKey = intent.getStringExtra(EXTRA_SESSION_KEY);
@@ -88,17 +92,24 @@ public class AlbaIntentService extends IntentService {
         }
     }
 
-    private void handleStartPayment(String name, float amount, String phone) {
-
+    private void handleStartPayment(String name, BigDecimal amount, String phone) {
         Log.d("AlbaIntentService", "Start payment: " + name + ", " + amount + ", " + phone);
         try {
             String paymentType = getResources().getString(R.string.alba_payment_type);
-            InitPaymentAnswer answer = alba.initPayment(paymentType, amount, name, null, phone, null);
-            Log.d("AlbaIntentService", "Transaction created: " + answer.getTransactionId());
+            InitPaymentResponse response = alba.initPayment(
+                    InitPaymentRequest.builder()
+                            .setPaymentType(paymentType)
+                            .setCost(amount)
+                            .setName(name)
+                            .setPhone(phone)
+                            // .setTest(InitTestType.OK)
+                            .build()
+            );
+            Log.d("AlbaIntentService", "Transaction created: " + response.getTransactionId());
 
             Bundle resultData = new Bundle();
-            resultData.putInt(DATA_TRANSACTION_ID, answer.getTransactionId());
-            resultData.putString(DATA_SESSION_KEY, answer.getSessionKey());
+            resultData.putInt(DATA_TRANSACTION_ID, response.getTransactionId());
+            resultData.putString(DATA_SESSION_KEY, response.getSessionKey());
             resultReceiver.send(STATUS_INIT_FINISHED, resultData);
 
         } catch (AlbaTemporaryError | AlbaFatalError albaError) {
@@ -113,7 +124,7 @@ public class AlbaIntentService extends IntentService {
         try {
             TransactionDetails details = alba.transactionDetails(sessionKey);
             resultData.putInt(DATA_TRANSACTION_ID, transactionId);
-            resultData.putString(DATA_STATUS, details.getStatus());
+            resultData.putString(DATA_STATUS, details.getStatus().toString());
             resultReceiver.send(STATUS_CHECK_FINISHED, resultData);
 
         } catch (AlbaTemporaryError albaTemporaryError) {
