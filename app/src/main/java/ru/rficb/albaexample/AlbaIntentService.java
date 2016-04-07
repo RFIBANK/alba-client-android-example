@@ -39,9 +39,9 @@ public class AlbaIntentService extends IntentService {
 
     public static final String DATA_TOKEN = "ru.rficb.albaexample.data.token";
     public static final String DATA_TOKEN_ERROR_CARD_NUMBER = "ru.rficb.albaexample.data.token.error.card";
-    public static final String DATA_TOKEN_ERROR_HOLDER = "ru.rficb.albaexample.data.token.error.holder";
-    public static final String DATA_TOKEN_ERROR_MONTH = "ru.rficb.albaexample.data.token.error.month";
-    public static final String DATA_TOKEN_ERROR_YEAR = "ru.rficb.albaexample.data.token.error.year";
+    public static final String DATA_TOKEN_ERROR_HOLDER = "ru.rficb.albaexample.data.token.error.card_holder";
+    public static final String DATA_TOKEN_ERROR_MONTH = "ru.rficb.albaexample.data.token.error.exp_month";
+    public static final String DATA_TOKEN_ERROR_YEAR = "ru.rficb.albaexample.data.token.error.exp_year";
     public static final String DATA_TOKEN_ERROR_CVC = "ru.rficb.albaexample.data.token.error.cvc";
 
     private static final String ACTION_CREATE_TOKEN = "ru.rficb.albaexample.action.create_token";
