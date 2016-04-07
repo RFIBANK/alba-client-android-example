@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.List;
 
+import static android.text.Html.escapeHtml;
+
 public class ResultActivity extends ActionBarActivity implements AlbaResultReceiver.Receiver  {
 
     AlbaResultReceiver resultReceiver;
@@ -184,10 +186,10 @@ public class ResultActivity extends ActionBarActivity implements AlbaResultRecei
         browserIntent.setAction(Intent.ACTION_VIEW);
 
         String html = readTrimRawTextFile(this, R.raw.card_3ds_from);
-        html = html.replace("${ACSUrl}", acsUrl);
-        html = html.replace("${PaReq}", paReq);
-        html = html.replace("${MD}", md);
-        html = html.replace("${TermUrl}", tempUrl);
+        html = html.replace("${ACSUrl}", escapeHtml(acsUrl));
+        html = html.replace("${PaReq}", escapeHtml(paReq));
+        html = html.replace("${MD}", escapeHtml(md));
+        html = html.replace("${TermUrl}", escapeHtml(tempUrl));
 
         String dataUri = "data:text/html," + URLEncoder.encode(html).replaceAll("\\+","%20");
         browserIntent.setData(Uri.parse(dataUri));
