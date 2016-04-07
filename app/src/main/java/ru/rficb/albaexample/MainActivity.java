@@ -1,36 +1,26 @@
 package ru.rficb.albaexample;
 
-import android.content.Context;
-import android.os.Handler;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements AlbaResultReceiver.Receiver {
-
-    final int CHECK_TIMEOUT = 3500;
-
-    AlbaResultReceiver resultReceiver;
-    private Runnable runnable;
-    private Handler handler = new Handler();
+public class MainActivity extends ActionBarActivity {
+    TextView nameField;
+    TextView costField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        resultReceiver = new AlbaResultReceiver(null);
-
-        final TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        final String phoneNumber = tManager.getLine1Number();
-
-        TextView phoneField = (TextView)findViewById(R.id.phone);
-        phoneField.setText(phoneNumber);
+        nameField = (TextView)findViewById(R.id.name);
+        costField = (TextView)findViewById(R.id.cost);
     }
 
     @Override
@@ -39,103 +29,40 @@ public class MainActivity extends ActionBarActivity implements AlbaResultReceive
         return true;
     }
 
-    public void onClick(View arg0) {
-        TextView statusField = (TextView)findViewById(R.id.status);
-        TextView nameField = (TextView)findViewById(R.id.name);
-        TextView costField = (TextView)findViewById(R.id.cost);
-        TextView phoneField = (TextView)findViewById(R.id.phone);
+    public boolean checkFields() {
+        Resources resources = getResources();
 
-        statusField.setText(getResources().getString(R.string.status_start));
+        if (nameField.getText().toString().equals("")) {
+            Toast.makeText(this, resources.getString(R.string.validation_error_name_is_empty),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
 
-        AlbaIntentService.startPayment(
-            this,
-            resultReceiver,
-            nameField.getText().toString(),
-            costField.getText().toString(),
-            phoneField.getText().toString()
-        );
+        if (costField.getText().toString().equals("")) {
+            Toast.makeText(this, resources.getString(R.string.validation_error_cost_is_empty),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        resultReceiver = new AlbaResultReceiver(new Handler());
-        resultReceiver.setReceiver(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        resultReceiver.setReceiver(null);
-    }
-
-    @Override
-    public void onReceiveResult(int resultCode, Bundle data) {
-        final int transactionId;
-        final String sessionKey;
-        final Context context = this;
-        final TextView statusField = (TextView)findViewById(R.id.status);
-
-        switch (resultCode) {
-            case AlbaIntentService.STATUS_INIT_FINISHED:
-                transactionId = data.getInt(AlbaIntentService.DATA_TRANSACTION_ID);
-                sessionKey = data.getString(AlbaIntentService.DATA_SESSION_KEY);
-
-                statusField.setText(
-                    String.format(getResources().getString(R.string.status_created), transactionId)
-                );
-
-                runnable = new Runnable() {
-                    public void run() {
-                    statusField.setText(
-                        String.format(getResources().getString(R.string.status_waiting), transactionId)
-                    );
-                    if (runnable == this) {
-                       // Если пользователь повторно нажимает "оплатить",
-                       // то проверяем только статус последней транзакции
-                       AlbaIntentService.startCheckStatus(
-                           context, resultReceiver, transactionId, sessionKey
-                       );
-                    }
-                    }
-                };
-
-                handler.postDelayed(runnable, CHECK_TIMEOUT);
-                break;
-
-            case AlbaIntentService.STATUS_CHECK_FINISHED:
-                transactionId = data.getInt(AlbaIntentService.DATA_TRANSACTION_ID);
-                String transactionStatus = data.getString(AlbaIntentService.DATA_STATUS);
-
-                Log.v(
-                    "AlbaIntentService",
-                    String.format("Transaction %d status: %s", transactionId, transactionStatus)
-                );
-                if (transactionStatus.equals("error")) {
-                    statusField.setText(
-                        String.format(getResources().getString(R.string.status_cant_pay), transactionId)
-                    );
-                } else if (transactionStatus.equals("payed") || transactionStatus.equals("success")) {
-                    statusField.setText(
-                        String.format(getResources().getString(R.string.status_paid), transactionId)
-                    );
-                } else {
-                    handler.postDelayed(runnable, CHECK_TIMEOUT);
-                }
-                break;
-
-            case AlbaIntentService.STATUS_INIT_ERROR:
-                statusField.setText(getResources().getString(R.string.status_cant_init));
-                break;
-
-            case AlbaIntentService.STATUS_CHECK_ERROR:
-                transactionId = data.getInt(AlbaIntentService.DATA_TRANSACTION_ID);
-                statusField.setText(
-                    String.format(getResources().getString(R.string.status_cant_pay), transactionId)
-                );
-                break;
+    public void onClickMc(View view) {
+        if (checkFields()) {
+            Intent intent = new Intent(this, McActivity.class);
+            intent.putExtra("NAME", nameField.getText().toString());
+            intent.putExtra("COST", costField.getText().toString());
+            startActivity(intent);
         }
     }
 
+    public void onClickCard(View view) {
+        if (checkFields()) {
+            Intent intent = new Intent(this, CardActivity.class);
+            intent.putExtra("NAME", nameField.getText().toString());
+            intent.putExtra("COST", costField.getText().toString());
+            startActivity(intent);
+        }
+    }
 
 }
