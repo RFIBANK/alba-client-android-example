@@ -11,14 +11,36 @@
     <string name="pay_button">Оплатить</string>
     <string name="label_status">Статус: </string>
     <string name="default_status">ожидание начала оплаты</string>
+    <string name="label_payment_type">Способ оплаты: </string>
+    <string name="label_payment_type_mc">телефон</string>
+    <string name="label_payment_type_card">карта</string>
+    <string name="label_new_payment">новый платеж</string>
 
-    <string name="status_start">ожидание начала оплаты</string>
-    <string name="status_created">создана транзакция (%d)</string>
-    <string name="status_waiting">ожидание оплаты транзакции (%d)</string>
+    <string name="validation_error_title"></string>
+    <string name="validation_error_name_is_empty">Поле назначение платежа обязательно</string>
+    <string name="validation_error_cost_is_empty">Поле сумма платежа обязательно</string>
+
+    <string name="label_card_limitation">Срок действия:</string>
+    <string name="label_card_number">Номер карты:</string>
+    <string name="label_card_holder">Владелец карты:</string>
+    <string name="label_card_month">Месяц:</string>
+    <string name="label_card_year">Год:</string>
+    <string name="label_card_cvc">CVC:</string>
+
+    <string name="status_start">Ожидание начала оплаты</string>
+    <string name="status_created">Создана транзакция (%d)</string>
+    <string name="status_waiting">Ожидание оплаты транзакции (%d)</string>
     <string name="status_cant_pay">не удалось оплатить транзакцию (%d)</string>
-    <string name="status_paid">транзакция (%d) оплачена</string>
+    <string name="status_paid">Транзакция (%d) оплачена</string>
     <string name="status_cant_init">Не удалось инициировать транзакцию</string>
 
+    <string name="spg_acquire_url" formatted="false">https://secure.rficb.ru/acquire?sid=%d&amp;oid=%d&amp;op=pay</string>
+    <string name="spg_test_acquire_url" formatted="false">https://test.rficb.ru/acquire?sid=%d&amp;oid=%d&amp;op=pay</string>
+    <string name="payment_type_mc">mc</string>
+    <string name="payment_type_card">spg_test</string>
+    <integer name="check_timeout">3500</integer>
+
+    <integer name="alba_service_id">МЕСТО ДЛЯ ID СЕРВИСА</integer>
     <string name="alba_key">МЕСТО ДЛЯ КЛЮЧА</string>
-    <string name="alba_payment_type">mc</string>
+
 </resources>

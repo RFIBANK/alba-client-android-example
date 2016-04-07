@@ -1,10 +1,12 @@
 package ru.rficb.albaexample;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+@SuppressLint("ParcelCreator")
 public class AlbaResultReceiver extends ResultReceiver {
 
     public interface Receiver {

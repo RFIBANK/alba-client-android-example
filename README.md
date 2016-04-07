@@ -7,4 +7,5 @@
 
 Для корректной работы необходимо прописать ключ в файле strings.xml:
 
+    <integer name="alba_service_id">МЕСТО ДЛЯ ID СЕРВИСА</integer>
     <string name="alba_key">МЕСТО ДЛЯ КЛЮЧА</string>
